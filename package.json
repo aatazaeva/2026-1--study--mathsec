@@ -1,0 +1,14 @@
+{
+  "name": "mathsec",
+  "version": "1.0.0",
+  "description": "Математические основы защиты информации и информационной безопасности",
+  "main": "index.js",
+  "repository": "https://github.com/aatazaeva/2026-1--study--mathsec.git",
+  "author": "<>",
+  "license": "CC-BY-4.0",
+    "config": {
+	"commitizen": {
+	    "path": "cz-conventional-changelog"
+	}
+    }
+}
