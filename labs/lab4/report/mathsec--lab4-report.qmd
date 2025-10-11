@@ -1,0 +1,221 @@
+---
+## Author
+author:
+  name: Тазаева Анастасия Анатольевна
+  degrees: BSc
+  orcid: 
+  email: 1032259385@pfur.ru
+  affiliation:
+    - name: Российский университет дружбы народов
+      country: Российская Федерация
+      postal-code: 117198
+      city: Москва
+      address: ул. Миклухо-Маклая, д. 6
+
+## Title
+title: "Лабораторная работа №4"
+subtitle: "Вычисление наибольшего общего делителя"
+license: "CC BY"
+---
+
+# Цель работы
+
+Ознакомиться с алгоритмами вычисления наибольшего общего делителя. Реализовать их.
+
+# Задание
+
+Реализовать на языке программирования Julia:
+
+1. Алгоритм Евклида
+2. Бинарный алгоритм Евклида
+3. Расширенный алгоритм Евклида
+4. Расширенный бинарный алгоритм Евклида
+
+# Теоретическое введение
+
+## Наибольший общий делитель (НОД)
+
+Целое число $d \neq 0$ называется **наибольшим общим делителем** чисел $a_1, a_2, ..., a_k$, если:
+
+1. Все числа делятся на $d$
+2. Любой другой общий делитель делится на $d$
+
+# Выполнение лабораторной работы
+
+## Алгоритм Евклида
+
+Написан программный код на языке Julia [@doc-julia], реализующий алгоритм Евклида:
+
+```Julia
+function euclidean_gcd(a::Int, b::Int)
+    if b <= 0 || a < b
+        error("error a, b, please use 0 < b <= a")
+    end
+    r0 = a
+    r1 = b
+    while r1 != 0
+        r1_plus_1 = r0 % r1 #vy4islenie ostatka
+        r0 = r1 #obnovlenie zna4enii
+        r1 = r1_plus_1
+    end
+    return r0 #GCD
+end
+```
+
+Получен следующий результат выполнения программного кода ([рис. @fig-001]).
+
+![Алгоритм Евклида. Пример отработки](image/euclidean.png){#fig-001 width=70%}
+
+## Бинарный алгоритм Евклида
+
+Написан программный код на языке Julia [@doc-julia], реализующий бинарный алгоритм Евклида:
+
+```Julia
+function binary_gcd(a::Int, b::Int)
+    if b <= 0 || a < b
+        error("error a, b, please use 0 < b <= a")
+    end
+    g = 1 #mnojitel dlya u4eta obshih 2
+    while a % 2 == 0 && b % 2 == 0
+        a /= 2
+        b /= 2
+        g *= 2
+    end
+    u = a #first num
+    v = b # second num
+    while u != 0
+        # udalyaem mnojiteli 2 is u
+        while u % 2 == 0
+            u /= 2
+        end
+        # udalyaem mnojiteli 2 is v
+        while v % 2 == 0
+            v /= 2
+        end
+        if u >= v
+            u = u - v
+        else 
+            v = v - u
+        end
+    end
+    return g * v
+end
+```
+
+Получен следующий результат выполнения программного кода ([рис. @fig-002]).
+
+![Бинарный алгоритм Евклида. Пример отработки](image/binary.png){#fig-002 width=70%}
+
+## Расширенный алгоритм Евклида
+
+Написан программный код на языке Julia [@doc-julia], реализующий расширенный алгоритм Евклида:
+
+```Julia
+function extended_gcd(a::Int, b::Int)
+    if b <= 0 || a < b
+        error("error a, b, please use 0 < b <= a")
+    end
+    #xa+yb=gcd
+    r0, r1 = a, b
+    x0, x1 = 1, 0
+    y0, y1 = 0, 1
+    while r1 != 0
+        q = div(r0, r1) #4astnoe
+        r_next = r0 - q * r1 #sled.ostatok
+        x_next = x0 - q * x1 #koeff x
+        y_next = y0 - q * y1 #koeff y
+        #sdvig
+        r0, r1 = r1, r_next
+        x0, x1 = x1, x_next
+        y0, y1 = y1, y_next
+    end
+    return r0, x0, y0
+end
+```
+
+Получен следующий результат выполнения программного кода ([рис. @fig-003]).
+
+![Расширенный алгоритм Евклида. Пример отработки](image/extended.png){#fig-003 width=70%}
+
+## Расширенный бинарный алгоритм Евклида
+
+Написан программный код на языке Julia [@doc-julia], реализующий расширенный бинарный алгоритм Евклида:
+
+```Julia
+function extended_binary_gcd(a::Int, b::Int)
+    if b <= 0 || a < b
+        error("error a, b, please use 0 < b <= a")
+    end
+    g = 1 #mnojitel dlya u4eta obshih 2
+    u = a #first num
+    v = b # second num
+    #koeff dlya lin.predstavleniya
+    A = 1
+    B = 0
+    C = 0
+    D = 1
+    while u % 2 == 0 && v % 2 == 0
+        u /= 2
+        v /= 2
+        g *= 2
+    end
+    while u != 0
+        # obrabotka 4etnosti u
+        while u % 2 == 0
+            u ÷= 2  # 
+            # obnovlyaem koeff A B
+            if A % 2 == 0 && B % 2 == 0
+                A ÷= 2  # if oba 4et - to delim na 2
+                B ÷= 2
+            else
+                A = (A + b) ÷ 2  # ina4e primenyam sled formulu
+                B = (B - a) ÷ 2
+            end
+        end
+        # obrabotka 4etnosti v
+        while v % 2 == 0
+            v ÷= 2  # 
+            # obnovlyaem koeff C D
+            if C % 2 == 0 && D % 2 == 0
+                C ÷= 2  # if oba 4et - to delim na 2
+                D ÷= 2
+            else
+                C = (C + b) ÷ 2  # ina4e primenyam sled formulu
+                D = (D - a) ÷ 2
+            end
+        end
+        if u >= v
+            u = u - v  # 
+            A = A - C  # obnovlyaem koeff
+            B = B - D
+        else
+            v = v - u  # 
+            C = C - A  # obnovlyaem koeff
+            D = D - B
+        end
+    end
+    d = g * v
+    # koeff x y
+    x = C
+    y = D
+    return d, x, y
+end  
+```
+
+Получен следующий результат выполнения программного кода ([рис. @fig-004]).
+
+![Расширенный бинарный алгоритм Евклида. Пример отработки](image/extended_binary.png){#fig-004 width=70%}
+
+# Выводы
+
+В ходе лабораторной работы реализованы на языке программирования Julia:
+
+1. Алгоритм Евклида
+2. Бинарный алгоритм Евклида
+3. Расширенный алгоритм Евклида
+4. Расширенный бинарный алгоритм Евклида
+
+# Список литературы{.unnumbered}
+
+::: {#refs}
+:::
